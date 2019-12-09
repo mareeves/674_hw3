@@ -4,6 +4,7 @@ class Node{
 	Node *right;
 	public:
 	int value;
+	int height;
 	Node(int value){
 		left = NULL;
 		right = NULL;
@@ -11,6 +12,9 @@ class Node{
 	}
 	
 	~Node(){
+	}
+	
+	void deleteFullTree(){
 		Node * left = this->getLeft();
 		Node * right = this->getRight();
 		if(left!=NULL){
