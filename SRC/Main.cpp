@@ -6,6 +6,74 @@
 #include <vector>
 #define COUNT 10  
 
+std::vector<int> getS3(std::vector<int>  unsorted, std::vector<int> sorted){
+	//We make a right and a left list
+	std::vector<int> left;
+	std::vector<int> right;
+
+	// If the size of the list is zero then return
+    if(unsorted.size() == 0){
+		return sorted;
+	}
+
+	// If the list is 1 then we know to pushback that element into the sorted list
+	else if(unsorted.size() == 1){
+		sorted.push_back(unsorted.at(0));
+		return sorted;
+	}
+	
+	
+	// If the list size is even 
+	// Take the middle element 
+	else if(unsorted.size()%2 == 0){
+		sorted.push_back(unsorted.at((unsorted.size()/2)-1));
+		for(int i = 0; i< unsorted.size(); i++){
+			//populate the left list
+			if(i < (unsorted.size()/2)-1){
+				left.push_back(unsorted.at(i));
+			}
+			//populate the right list
+			else if (i > (unsorted.size()/2)-1){
+				right.push_back(unsorted.at(i));
+			}
+		}
+		
+		//Run this method again for the left and right lists created
+		sorted = getS3(left, sorted);
+		sorted = getS3(right, sorted);
+		return sorted;
+		
+	}
+
+	//If the list size is odd
+	//To find the middle element add 1 to the size and divide by 2 
+	else if(unsorted.size()%2!=0){
+		sorted.push_back(unsorted.at(((unsorted.size()+1)/2)-1));
+			for(int i = 0; i<unsorted.size(); i++){
+				//populate the left list
+				if(i < ((unsorted.size()+1)/2)-1){
+					left.push_back(unsorted.at(i));
+				}
+				//populate the right list
+				else if (i > ((unsorted.size()+1)/2)-1){
+					right.push_back(unsorted.at(i));
+				}
+
+			}
+			//run the method again for the left and the right list
+			sorted = getS3(left, sorted);
+			sorted = getS3(right, sorted);
+			return sorted;
+	}
+
+
+	return sorted;
+
+
+}
+
+
+
 
 int main(){
 	
@@ -29,15 +97,24 @@ int main(){
 	95,12,42,97,62,69,11,50,44,14,37,98,9,7,45,
 	29,24,84,54,83,82,27,33,96,21,35,26,61,3,52,
 	31,58,88,47,25,10,30,53,22,80,90,40,89,73,15,48,36};
+	
+	
+	//Vector that is made of the middle element 
+	std::vector<int> S3 = getS3(S1, newVec);
 
-	std::vector<int> S1center;
+	for(int i = 0; i < S3.size() ; i++){
+		std::cout << S3[i] << std::endl;
+	}
+
+	/*std::vector<int> S1center;
 	
 	BST *bst = new BST();
 	Node * root = bst->insertVectorDSW(S2);
 	
 	delete(bst);
 	root->deleteFullTree();
-	delete(root);
+	delete(root);*/
+	
 	/*
 	
 	SplayTree * ST = new SplayTree();
