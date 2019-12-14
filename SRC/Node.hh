@@ -8,6 +8,7 @@ class Node{
 	Node(int value){
 		left = NULL;
 		right = NULL;
+		height = 1;
 		this->value = value;
 	}
 	

@@ -91,21 +91,23 @@ int main(){
 	
 	//random list
 	std::vector<int> S2 = {17,4,32,72,94,34,56,100,
-	1,43,71,78,68, 93,70,92,65,77,60,49, 76,74,13,
+	1,43}; /*71,78,68, 93,70,92,65,77,60,49, 76,74,13,
 	38,51,41,91,20,16,18,19,85,39,6,75,2,28,99,
 	87,5,8,81,57,63,55,23,59,46,66,79,86,64,67,
 	95,12,42,97,62,69,11,50,44,14,37,98,9,7,45,
 	29,24,84,54,83,82,27,33,96,21,35,26,61,3,52,
-	31,58,88,47,25,10,30,53,22,80,90,40,89,73,15,48,36};
+	31,58,88,47,25,10,30,53,22,80,90,40,89,73,15,48,36};*/
 	
 	
-	//Vector that is made of the middle element 
-	std::vector<int> S3 = getS3(S1, newVec);
 
-	for(int i = 0; i < S3.size() ; i++){
-		std::cout << S3[i] << std::endl;
-	}
+	//Vector that is made of the middle element
+	/*std::vector<int> S3 = {}; 
+	S3 = getS3(S1, S3);*/
 
+	AVL * avl = new AVL();
+	avl->insertVector(S2);
+
+	
 	/*std::vector<int> S1center;
 	
 	BST *bst = new BST();

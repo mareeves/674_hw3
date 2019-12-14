@@ -43,7 +43,7 @@ class AVL{
 	}  
 	
 	
-			int findTreeHeight(Node* node)  
+	int findTreeHeight(Node* node)  
 	{  
 		if (node == NULL)  
 			return 0;  
@@ -186,15 +186,16 @@ class AVL{
 	
 	 
 	
-	// Get Balance factor of node N  
+	// Check to see the difference in height between the left
+	// and the right nodes  
 	int getBalance(Node *N)  
 	{  
 		if (N == NULL)  
 			return 0;  
 		return height(N->getLeft()) - height(N->getRight());  
-	}  
-	// A utility function to get the  
-	// height of the tree  
+	}
+	  
+	//return the height of the Node
 	int height(Node *N)  
 	{  
 		if (N == NULL)  
@@ -202,7 +203,7 @@ class AVL{
 		return N->height;  
 	} 
 	
-	// A utility function to get maximum 
+	//Get the maximum of two integers
 	// of two integers  
 	int max(int a, int b)  
 	{  
@@ -210,17 +211,41 @@ class AVL{
 	}
 	 
 	
-	// A utility function to left  
-	// rotate subtree rooted with x  
-	// See the diagram given above.  
+	//Left rotate 
 	Node *leftRotate(Node *x)  
 	{  
-		Node *y = x->getRight();  
-		Node *T2 = y->getLeft();  
-	  
+	
+		/*
+		
+			x
+			 \
+			  y
+			 /
+			yLeft
+			
+			ROTATE
+			
+			y
+		   /
+		  x
+		   \
+		    yLeft
+		
+		
+		*/
+		
+		//Set y equal to x right
+		Node *y = x->getRight();
+
+		//yLeft equal to y left   
+		Node *yLeft = y->getLeft();  
+
 		// Perform rotation  
 		y->setLeft(x);  
-		x->setRight(T2);  
+		x->setRight(yLeft);
+		
+		std::cout << "Rotating Left" << std::endl; 
+  
 	  
 		// Update heights  
 		x->height = max(height(x->getLeft()),     
@@ -228,22 +253,72 @@ class AVL{
 		y->height = max(height(y->getLeft()),  
 						height(y->getRight())) + 1;  
 	  
-		// Return new root  
+		// Return the new root
+		  
 		return y;  
-	}  
+	}
 	
-	// A utility function to right 
-	// rotate subtree rooted with y  
-	// See the diagram given above.  
+	Node *leftRotate(Node *x, Node * parent){
+		//Set y equal to x right
+		Node *y = x->getRight();
+
+		//yLeft equal to y left   
+		Node *yLeft = y->getLeft();  
+
+		// Perform rotation  
+		y->setLeft(x);  
+		x->setRight(yLeft);
+		parent->setRight(y);
+		std::cout << "Rotating Left" << std::endl; 
+  
+	  
+		// Update heights  
+		x->height = max(height(x->getLeft()),     
+						height(x->getRight())) + 1;  
+		y->height = max(height(y->getLeft()),  
+						height(y->getRight())) + 1;  
+	  
+		// Return the new root
+		  
+		return parent; 
+	}   
+	
+	//Right rotate function
 	Node *rightRotate(Node *y)  
 	{  
-		Node *x = y->getLeft();  
-		Node *T2 = x->getRight();  
+	
+		/*
+				y
+			   /
+			  x
+			   \
+			   	xRight
+			   	
+			   	ROTATE
+			   	
+			   	x
+			   	 \
+			   	  y
+			   	 /
+		      xRight
+		      
+		*/
+		
+		   
+		// Get the y's left Node
+		Node *x = y->getLeft();
+		//get x's Right node  
+		Node *xRight = x->getRight();  
 	  
-		// Perform rotation  
-		x->setRight(y);  
-		y->setLeft(T2);  
-	  
+	  	std::cout << "Rotate right" << std::endl; 
+
+		//x's right node is now y  
+		x->setRight(y);
+		
+		//y's left node is nor x'Right node
+		y->setLeft(xRight);
+		  
+	  	
 		// Update heights  
 		y->height = max(height(y->getLeft()), 
 						height(y->getRight())) + 1;  
@@ -252,16 +327,61 @@ class AVL{
 	  
 		// Return new root  
 		return x;  
-	} 
+	}
+	
+	
+	Node *rightRotate(Node *y, Node * parent)  
+	{  
+	
+		/*
+				y
+			   /
+			  x
+			   \
+			   	xRight
+			   	
+			   	ROTATE
+			   	
+			   	x
+			   	 \
+			   	  y
+			   	 /
+		      xRight
+		      
+		*/
+		
+		   
+		// Get the y's left Node
+		Node *x = y->getLeft();
+		//get x's Right node  
+		Node *xRight = x->getRight();  
+	  
+	  	std::cout << "Rotate right" << std::endl; 
+
+		//x's right node is now y  
+		x->setRight(y);
+		
+		//y's left node is nor x'Right node
+		y->setLeft(xRight);
+		  
+	  	parent->setLeft(x);
+		// Update heights  
+		y->height = max(height(y->getLeft()), 
+						height(y->getRight())) + 1;  
+		x->height = max(height(x->getLeft()), 
+						height(x->getRight())) + 1;  
+	  
+		// Return new root  
+		return parent;  
+	}  
 	
 	void insertVector(std::vector<int> vec){
 		Node * root = NULL;
-		for(int i = 0; i < vec.size(); i++){
-			root = insert(root, vec[i]);
-			if(i%9==0){
-				print2D(root);
-				std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
-			}
+		for(int i = 1; i <= vec.size(); i++){
+			//std::cout << "Vec[i] is " << vec[i] << std::endl;
+			root = insert(root, vec[i-1]);
+			print2D(root);
+			std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
 		}
 		
 		deleteNode(root, 3);
@@ -273,52 +393,69 @@ class AVL{
 	// returns the new root of the subtree.  
 	Node* insert(Node* node, int value)  
 	{  
-		/* 1. Perform the normal BST insertion */
-		if (node == NULL)  
-			return(new Node(value));  
+		//When the tree is empty return the root
+		if (node == NULL){ 
+			node = new Node(value);
+			return(node);
+		}  
+	  	//If the value is less than the node value
+	  	//insert into the left side
+		if (value < node->value){ 
+		  node->setLeft(insert(node->getLeft(), value)); 
+		}
+		//If the value is greater than the node value
+		//insert into the right side 
+		else if (value > node->value){
+		  node->setRight(insert(node->getRight(), value));  
+		}
+		else{
+			return node;
+		}  
 	  
-		if (value < node->value)  
-			node->setLeft(insert(node->getLeft(), value));  
-		else if (value > node->value)  
-			node->setRight(insert(node->getRight(), value));  
-		else // Equal keys are not allowed in BST  
-			return node;  
-	  
-		/* 2. Update height of this ancestor node */
+		//Update the height of the parent Node
 		node->height = 1 + max(height(node->getLeft()),  
 							height(node->getRight()));  
 	  
-		/* 3. Get the balance factor of this ancestor  
-			node to check whether this node became  
-			unbalanced */
+		//We need to check to see if the Node has become unbalanced
+		std::cout << node->value << std::endl;
+		std::cout << height(node) << std::endl;
+		std::cout << height(node->getLeft()) << std::endl;
+		std::cout << height(node->getRight()) << std::endl; 
 		int balance = getBalance(node);  
 	  
-		// If this node becomes unbalanced, then  
-		// there are 4 cases  
+		//Now we got through the cases where the Node has become unbalanced
+		//There are four altogether 
+	  
 	  
 		// Left Left Case  
-		if (balance > 1 && value < node->getLeft()->value)  
+		if (balance > 1 && value < node->getLeft()->value){
+		  	std::cout << "Left-Left Case" << std::endl;
 			return rightRotate(node);  
+		}
 	  
 		// Right Right Case  
-		if (balance < -1 && value > node->getRight()->value)  
-			return leftRotate(node);  
+		if (balance < -1 && value > node->getRight()->value) {
+			std::cout << "Right-Right Case" << std::endl;
+			return leftRotate(node);
+		} 
 	  
 		// Left Right Case  
-		if (balance > 1 && value > node->getLeft()->value)  
-		{  
+		if (balance > 1 && value > node->getLeft()->value){
+			std::cout << "Left-Right Case" << std::endl;
+  
 			node->setLeft(leftRotate(node->getLeft()));  
 			return rightRotate(node);  
 		}  
 	  
 		// Right Left Case  
-		if (balance < -1 && value < node->getRight()->value)  
-		{  
+		if (balance < -1 && value < node->getRight()->value) {
+			std::cout << "Right-Left Case" << std::endl;
+  
 			node->setRight(rightRotate(node->getRight()));  
 			return leftRotate(node);  
-		}  
-	  
-		/* return the (unchanged) node pointer */
+		}
+		  
+	  	//If the node was not unbalanced then return the node pointer
 		return node;  
 	}
 
