@@ -38,132 +38,106 @@ class SplayTree{
 		print2DUtil(root, 0);  
 	}  
 	  
-	//Used to rotate Right 
-	Node *rightRotate(Node *x)  
-	{  
-		Node *y = x->getLeft();  
-		x->setLeft(y->getRight());  
-		y->setRight(x);  
-		return y;  
-	}  
-	  
-	//Used to Rotate Left 
-	Node *leftRotate(Node *x)  
-	{  
-		Node *y = x->getRight();  
-		x->setRight(y->getLeft());  
-		y->setLeft(x);  
-		return y;  
-	}  
-	  
 	
-	Node *splay(Node *root, int value)  
-	{  
-		
-		//Base Case 
-		if (root == NULL || root->value == value)  
-			return root;  
-	  
-		// value in the left subtree  
-		if (root->value > value)  
-		{  
-			// if the value is not in tree, we are done  
-			if (root->getLeft() == NULL) return root;  
-	  
-			// Zig-Zig (Left Left)  
-			if (root->getLeft()->value > value)  
-			{
-				std::cout << "Zig Zig (Left Left)" << std::endl; 
-				root->getLeft()->setLeft(splay(root->getLeft()->getLeft(), value));  
-	  
-				// Do first rotation for root,  
-				// second rotation is done after else  
-				root = rightRotate(root);  
-			}  
-			else if (root->getLeft()->value < value) // Zig-Zag (Left Right)  
-			{  
-			
-				std::cout << "Zig Zag (Left Right)" << std::endl; 
- 				root->getLeft()->setRight(splay(root->getLeft()->getRight(), value));  
-	  
-				// Do first rotation for root->left  
-				if (root->getLeft()->getRight() != NULL)  
-					root->setLeft(leftRotate(root->getLeft()));  
-			}  
-	  
-			// Do second rotation for root  
-			return (root->getLeft() == NULL)? root: rightRotate(root);  
-		}  
-		else // Key lies in right subtree  
-		{  
-			// Key is not in tree, we are done  
-			if (root->getRight() == NULL) return root;  
-	  
-			// Zig-Zag (Right Left)  
-			if (root->getRight()->value > value)  
-			{  
-				std::cout << "Zig Zag (Right Left)" << std::endl; 
-
-				root->getRight()->setLeft(splay(root->getRight()->getLeft(), value));  
-	  
-				// Do first rotation for root->right  
-				if (root->getRight()->getLeft() != NULL)  
-					root->setRight(rightRotate(root->getRight()));  
-			}  
-			else if (root->getRight()->value < value)// Zag-Zag (Right Right)  
-			{  
-				// Bring the key as root of  
-				// right-right and do first rotation
-				std::cout << "Zag Zag (Right Right)" << std::endl; 
+  void left_rotate( Node *x, Node * root ) {
+    Node *y = x->getRight();
+    if(y) {
+      x->setRight(y->getLeft());
+      if( y->getLeft() ) y->getLeft()->setParent(x);
+      y->setParent(x->getParent());
+    }
+    
+    if( !x->getParent() ) root = y;
+    else if( x == x->getParent()->getLeft() ) x->getParent()->setLeft(y);
+    else x->getParent()->setRight(y);
+    if(y) y->setLeft(x);
+    x->setParent(y);
+  }
   
-				root->getRight()->setRight(splay(root->getRight()->getRight(), value));  
-				root = leftRotate(root);  
-			}  
-	  
-			// Do second rotation for root  
-			return (root->getRight() == NULL)? root: leftRotate(root);  
-		}  
-	}  
+  void right_rotate( Node *x , Node * root) {
+    Node *y = x->getLeft();
+    if(y) {
+      x->setLeft(y->getRight());
+      if( y->getRight() ) y->getRight()->setParent(x);
+      y->setParent(x->getParent());
+    }
+    if( !x->getParent() ) root = y;
+    else if( x == x->getParent()->getLeft() ) x->getParent()->setLeft(y);
+    else x->getParent()->setRight(y);
+    if(y) y->setRight(x);
+    x->setParent(y);
+  }
+  
+  void splay( Node *x , Node * root) {
+    while( x->getParent() ) {
+      if( !x->getParent()->getParent() ) {
+        if( x->getParent()->getLeft() == x ) right_rotate( x->getParent() , root);
+        else left_rotate( x->getParent() , root);
+      } else if( x->getParent()->getLeft() == x && x->getParent()->getParent()->getLeft() == x->getParent() ) {
+        right_rotate( x->getParent()->getParent(), root );
+        right_rotate( x->getParent() , root);
+      } else if( x->getParent()->getRight() == x && x->getParent()->getParent()->getRight() == x->getParent() ) {
+        left_rotate( x->getParent()->getParent(), root );
+        left_rotate( x->getParent() , root);
+      } else if( x->getParent()->getLeft() == x && x->getParent()->getParent()->getRight() == x->getParent() ) {
+        right_rotate( x->getParent(), root );
+        left_rotate( x->getParent(), root );
+      } else {
+        left_rotate( x->getParent() , root);
+        right_rotate( x->getParent() , root);
+      }
+    }
+  }
 	  
 	// Function to insert a new key k  
 	// in splay tree with given root  
-	Node *insert(Node *root, int k)  
+	Node *insert(Node *root, int value)  
 	{  
 		// Simple Case: If tree is empty  
 		if (root == NULL){
-			return (new Node(k));  
+			return (new Node(value));  
 		}
 	  
-		// Bring the closest leaf node to root  
-		root = splay(root, k);  
-	  
-		// If key is already present, then return  
-		if (root->value == k) return root;  
-	  
-		// Otherwise allocate memory for new node  
-		Node *newnode = new Node(k);  
-	  
-		// If root's key is greater, make  
-		// root as right child of newnode  
-		// and copy the left child of root to newnode  
-		if (root->value > k)  
-		{  
-			newnode->setRight(root);  
-			newnode->setLeft(root->getLeft());  
-			root->setLeft(NULL);  
-		}  
-	  
-		// If root's key is smaller, make  
-		// root as left child of newnode  
-		// and copy the right child of root to newnode  
-		else
-		{  
-			newnode->setLeft(root);  
-			newnode->setRight(root->getRight());  
-			root->setRight(NULL);  
-		}  
-	  
-		return newnode; // newnode becomes new root  
+		Node * currentNode = root;
+		while(true){
+			//if vector value is greater than current Node
+			//BUT the node to the right is not free
+			if(value > currentNode->value && currentNode->getRight()!=NULL){
+				//shift the node to the right
+				currentNode = currentNode->getRight();
+			}
+			//if vector value is greater than the current Node
+			//and the right node is empty
+			else if (value > currentNode->value && currentNode->getRight()==NULL){
+				//Create a new node on the heap and have the currentNode point to it						
+				Node * splayNode = new Node(value);
+				currentNode->setRight(splayNode);
+				//print2D(root);
+				splayNode->setParent(currentNode);
+				splay(splayNode, root);
+				return splayNode;
+			}
+			
+			//if vector value is less than the current Node
+			//BUT the left node is not empty
+			else if(value < currentNode->value && currentNode->getLeft()!=NULL){
+				//shift the node to the left
+				currentNode = currentNode->getLeft();
+
+			}
+			
+			//if vector value is less than the current Node
+			//and the left node is empty
+			else if(value < currentNode->value && currentNode->getLeft()==NULL){
+				Node * splayNode = new Node(value);
+				currentNode->setLeft(splayNode);
+				//print2D(root);
+				splayNode->setParent(currentNode);
+				splay(splayNode, root);
+				return splayNode;
+			}
+		} 
+		
 	}
 	
 	void insertVector(std::vector<int> & vec){
@@ -174,13 +148,13 @@ class SplayTree{
 			std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
 			
 		}
-		root = search(root, 50);
+		//root = search(root, 50);
 		print2D(root);
 		
 	}
 	
-	Node *search(Node *root, int key)  
+	/*Node *search(Node * splayNode)  
 	{  
-    	return splay(root, key);  
-	} 
+    	return splay(splayNode);  
+	} */
 };  
