@@ -77,14 +77,11 @@ class AVL{
 	}  
 	
 	
-	// Recursive function to delete a node  
-	// with given key from subtree with  
-	// given root. It returns root of the  
-	// modified subtree.  
+	//Delete Node
 	Node* deleteNode(Node* root, int value)  
 	{  
 		  
-		// STEP 1: PERFORM STANDARD BST DELETE  
+		//Base Case
 		if (root == NULL)  
 			return root;  
 	  
@@ -143,11 +140,11 @@ class AVL{
 		if (root == NULL)  
 		return root;  
 	  
-		// STEP 2: UPDATE HEIGHT OF THE CURRENT NODE  
+		// UPDATE HEIGHT OF THE CURRENT NODE  
 		root->height = 1 + max(height(root->getLeft()),  
 							   height(root->getRight()));  
 	  
-		// STEP 3: GET THE BALANCE FACTOR OF  
+		// GET THE BALANCE FACTOR OF  
 		// THIS NODE (to check whether this  
 		// node became unbalanced)  
 		int balance = getBalance(root);  
@@ -244,7 +241,7 @@ class AVL{
 		y->setLeft(x);  
 		x->setRight(yLeft);
 		
-		std::cout << "Rotating Left" << std::endl; 
+		//std::cout << "Rotating Left" << std::endl; 
   
 	  
 		// Update heights  
@@ -254,34 +251,10 @@ class AVL{
 						height(y->getRight())) + 1;  
 	  
 		// Return the new root
-		  
+		print2D(y);  
 		return y;  
 	}
 	
-	Node *leftRotate(Node *x, Node * parent){
-		//Set y equal to x right
-		Node *y = x->getRight();
-
-		//yLeft equal to y left   
-		Node *yLeft = y->getLeft();  
-
-		// Perform rotation  
-		y->setLeft(x);  
-		x->setRight(yLeft);
-		parent->setRight(y);
-		std::cout << "Rotating Left" << std::endl; 
-  
-	  
-		// Update heights  
-		x->height = max(height(x->getLeft()),     
-						height(x->getRight())) + 1;  
-		y->height = max(height(y->getLeft()),  
-						height(y->getRight())) + 1;  
-	  
-		// Return the new root
-		  
-		return parent; 
-	}   
 	
 	//Right rotate function
 	Node *rightRotate(Node *y)  
@@ -310,7 +283,7 @@ class AVL{
 		//get x's Right node  
 		Node *xRight = x->getRight();  
 	  
-	  	std::cout << "Rotate right" << std::endl; 
+	  	//std::cout << "Rotate right" << std::endl; 
 
 		//x's right node is now y  
 		x->setRight(y);
@@ -328,63 +301,19 @@ class AVL{
 		// Return new root  
 		return x;  
 	}
-	
-	
-	Node *rightRotate(Node *y, Node * parent)  
-	{  
-	
-		/*
-				y
-			   /
-			  x
-			   \
-			   	xRight
-			   	
-			   	ROTATE
-			   	
-			   	x
-			   	 \
-			   	  y
-			   	 /
-		      xRight
-		      
-		*/
-		
-		   
-		// Get the y's left Node
-		Node *x = y->getLeft();
-		//get x's Right node  
-		Node *xRight = x->getRight();  
-	  
-	  	std::cout << "Rotate right" << std::endl; 
-
-		//x's right node is now y  
-		x->setRight(y);
-		
-		//y's left node is nor x'Right node
-		y->setLeft(xRight);
-		  
-	  	parent->setLeft(x);
-		// Update heights  
-		y->height = max(height(y->getLeft()), 
-						height(y->getRight())) + 1;  
-		x->height = max(height(x->getLeft()), 
-						height(x->getRight())) + 1;  
-	  
-		// Return new root  
-		return parent;  
-	}  
+ 
 	
 	void insertVector(std::vector<int> vec){
 		Node * root = NULL;
 		for(int i = 1; i <= vec.size(); i++){
 			//std::cout << "Vec[i] is " << vec[i] << std::endl;
 			root = insert(root, vec[i-1]);
-			print2D(root);
-			std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+			if(i%10 == 0){
+				print2D(root);
+				std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+			}
 		}
-		
-		deleteNode(root, 3);
+		deleteNode(root, 50);
 		print2D(root);
 	}
 	
@@ -417,10 +346,10 @@ class AVL{
 							height(node->getRight()));  
 	  
 		//We need to check to see if the Node has become unbalanced
-		std::cout << node->value << std::endl;
-		std::cout << height(node) << std::endl;
-		std::cout << height(node->getLeft()) << std::endl;
-		std::cout << height(node->getRight()) << std::endl; 
+		//std::cout << node->value << std::endl;
+		//std::cout << height(node) << std::endl;
+		//std::cout << height(node->getLeft()) << std::endl;
+		//std::cout << height(node->getRight()) << std::endl; 
 		int balance = getBalance(node);  
 	  
 		//Now we got through the cases where the Node has become unbalanced
@@ -429,19 +358,19 @@ class AVL{
 	  
 		// Left Left Case  
 		if (balance > 1 && value < node->getLeft()->value){
-		  	std::cout << "Left-Left Case" << std::endl;
+		  	//std::cout << "Left-Left Case" << std::endl;
 			return rightRotate(node);  
 		}
 	  
 		// Right Right Case  
 		if (balance < -1 && value > node->getRight()->value) {
-			std::cout << "Right-Right Case" << std::endl;
+			//std::cout << "Right-Right Case" << std::endl;
 			return leftRotate(node);
 		} 
 	  
 		// Left Right Case  
 		if (balance > 1 && value > node->getLeft()->value){
-			std::cout << "Left-Right Case" << std::endl;
+			//std::cout << "Left-Right Case" << std::endl;
   
 			node->setLeft(leftRotate(node->getLeft()));  
 			return rightRotate(node);  
@@ -449,7 +378,7 @@ class AVL{
 	  
 		// Right Left Case  
 		if (balance < -1 && value < node->getRight()->value) {
-			std::cout << "Right-Left Case" << std::endl;
+			//std::cout << "Right-Left Case" << std::endl;
   
 			node->setRight(rightRotate(node->getRight()));  
 			return leftRotate(node);  

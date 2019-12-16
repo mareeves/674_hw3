@@ -1,260 +1,186 @@
-/*
- *  C++ Program to Implement Splay Tree
- */
- 
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-using namespace std;
- 
-struct splay
-{
-    int key;
-    splay* lchild;
-    splay* rchild;
-};
- 
-class SplayTree
-{
-    public:
-        SplayTree()
-        {
-        }
-        
-        // Function to print binary tree in 2D  
-		// It does reverse inorder traversal  
-		void print2DUtil(splay *root, int space)  
+class SplayTree{  
+	public:
+	
+	SplayTree(){
+		
+	}
+	
+	
+	// Function to print binary tree in 2D  
+	// It does reverse inorder traversal  
+	void print2DUtil(Node *root, int space)  
+	{  
+		// Base case  
+		if (root == NULL)  
+			return;  
+	  
+		// Increase distance between levels  
+		space += COUNT;  
+	  
+		// Process right child first  
+		print2DUtil(root->getRight(), space);  
+	  
+		// Print current node after space  
+		// count  
+		std::cout<<std::endl;  
+		for (int i = COUNT; i < space; i++)  
+			std::cout<<" ";  
+		std::cout<<root->value<<"\n";  
+	  
+		// Process left child  
+		print2DUtil(root->getLeft(), space);  
+	}  
+		
+		
+	void print2D(Node *root)  
+	{  
+		// Pass initial space count as 0  
+		print2DUtil(root, 0);  
+	}  
+	  
+	//Used to rotate Right 
+	Node *rightRotate(Node *x)  
+	{  
+		Node *y = x->getLeft();  
+		x->setLeft(y->getRight());  
+		y->setRight(x);  
+		return y;  
+	}  
+	  
+	//Used to Rotate Left 
+	Node *leftRotate(Node *x)  
+	{  
+		Node *y = x->getRight();  
+		x->setRight(y->getLeft());  
+		y->setLeft(x);  
+		return y;  
+	}  
+	  
+	
+	Node *splay(Node *root, int value)  
+	{  
+		
+		//Base Case 
+		if (root == NULL || root->value == value)  
+			return root;  
+	  
+		// value in the left subtree  
+		if (root->value > value)  
 		{  
-			// Base case  
-			if (root == NULL)  
-				return;  
-		  
-			// Increase distance between levels  
-			space += COUNT;  
-		  
-			// Process right child first  
-			print2DUtil(root->rchild, space);  
-		  
-			// Print current node after space  
-			// count  
-			std::cout<<std::endl;  
-			for (int i = COUNT; i < space; i++)  
-				std::cout<<" ";  
-			std::cout<<root->key<<"\n";  
-		  
-			// Process left child  
-			print2DUtil(root->lchild, space);  
-		}  
-		
-		
-		void print2D(splay *root)  
-		{  
-			// Pass initial space count as 0  
-			print2DUtil(root, 0);  
-		}  
-		
-		
-				int findTreeHeight(Node* node)  
-		{  
-			if (node == NULL)  
-				return 0;  
-			else
-			{  
-				/* compute the depth of each subtree */
-				int leftHeight = findTreeHeight(node->getLeft());  
-				int rightHeight = findTreeHeight(node->getRight());  
-			  
-				/* use the larger one */
-				if (leftHeight > rightHeight)  
-					return(leftHeight + 1);  
-				else return(rightHeight + 1);  
+			// if the value is not in tree, we are done  
+			if (root->getLeft() == NULL) return root;  
+	  
+			// Zig-Zig (Left Left)  
+			if (root->getLeft()->value > value)  
+			{
+				std::cout << "Zig Zig (Left Left)" << std::endl; 
+				root->getLeft()->setLeft(splay(root->getLeft()->getLeft(), value));  
+	  
+				// Do first rotation for root,  
+				// second rotation is done after else  
+				root = rightRotate(root);  
 			}  
-		} 
- 
-        // RR(Y rotates to the right)
-        splay* RR_Rotate(splay* k2)
-        {
-            splay* k1 = k2->lchild;
-            k2->lchild = k1->rchild;
-            k1->rchild = k2;
-            return k1;
-        }
- 
-        // LL(Y rotates to the left)
-        splay* LL_Rotate(splay* k2)
-        {
-            splay* k1 = k2->rchild;
-            k2->rchild = k1->lchild;
-            k1->lchild = k2;
-            return k1;
-        }
- 
-        // An implementation of top-down splay tree
-        splay* Splay(int key, splay* root)
-        {
-            if (!root)
-                return NULL;
-            splay header;
-            /* header.rchild points to L tree;
-            header.lchild points to R Tree */
-            header.lchild = header.rchild = NULL;
-            splay* LeftTreeMax = &header;
-            splay* RightTreeMin = &header;
-            while (1)
-            {
-                if (key < root->key)
-                {
-                    if (!root->lchild)
-                        break;
-                    if (key < root->lchild->key)
-                    {
-                        root = RR_Rotate(root);
-                        // only zig-zig mode need to rotate once,
-                        if (!root->lchild)
-                            break;
-                    }
-                    /* Link to R Tree */
-                    RightTreeMin->lchild = root;
-                    RightTreeMin = RightTreeMin->lchild;
-                    root = root->lchild;
-                    RightTreeMin->lchild = NULL;
-                }
-                else if (key > root->key)
-                {
-                    if (!root->rchild)
-                        break;
-                    if (key > root->rchild->key)
-                    {
-                        root = LL_Rotate(root);
-                        // only zag-zag mode need to rotate once,
-                        if (!root->rchild)
-                            break;
-                    }
-                    /* Link to L Tree */
-                    LeftTreeMax->rchild = root;
-                    LeftTreeMax = LeftTreeMax->rchild;
-                    root = root->rchild;
-                    LeftTreeMax->rchild = NULL;
-                }
-                else
-                    break;
-            }
-            /* assemble L Tree, Middle Tree and R tree */
-            LeftTreeMax->rchild = root->lchild;
-            RightTreeMin->lchild = root->rchild;
-            root->lchild = header.rchild;
-            root->rchild = header.lchild;
-            return root;
-        }
- 
-        splay* New_Node(int key)
-        {
-            splay* p_node = new splay;
-            if (!p_node)
-            {
-                fprintf(stderr, "Out of memory!\n");
-                exit(1);
-            }
-            p_node->key = key;
-            p_node->lchild = p_node->rchild = NULL;
-            return p_node;
-        }
-        
-        void insertVector(std::vector<int> vec){
-        	splay * root = NULL;
-        	
-        	    for(int i = 0; i < vec.size(); i++){
-        			root = Insert(vec[i], root);
-        			if(i%12==0){
-        				InOrder(root);
-						print2D(root);
-        			}
-        		}
-        }
- 
-        splay* Insert(int key, splay* root)
-        {
-            static splay* p_node = NULL;
-            if (!p_node)
-                p_node = New_Node(key);
-            else
-                p_node->key = key;
-            if (!root)
-            {
-                root = p_node;
-                p_node = NULL;
-                return root;
-            }
-            root = Splay(key, root);
-            /* This is BST that, all keys <= root->key is in root->lchild, all keys >
-            root->key is in root->rchild. */
-            if (key < root->key)
-            {
-                p_node->lchild = root->lchild;
-                p_node->rchild = root;
-                root->lchild = NULL;
-                root = p_node;
-            }
-            else if (key > root->key)
-            {
-                p_node->rchild = root->rchild;
-                p_node->lchild = root;
-                root->rchild = NULL;
-                root = p_node;
-            }
-            else
-                return root;
-            p_node = NULL;
-            return root;
-        }
- 
-        splay* Delete(int key, splay* root)
-        {
-            splay* temp;
-            if (!root)
-                return NULL;
-            root = Splay(key, root);
-            if (key != root->key)
-                return root;
-            else
-            {
-                if (!root->lchild)
-                {
-                    temp = root;
-                    root = root->rchild;
-                }
-                else
-                {
-                    temp = root;
-                    /*Note: Since key == root->key,
-                    so after Splay(key, root->lchild),
-                    the tree we get will have no right child tree.*/
-                    root = Splay(key, root->lchild);
-                    root->rchild = temp->rchild;
-                }
-                free(temp);
-                return root;
-            }
-        }
- 
-        splay* Search(int key, splay* root)
-        {
-            return Splay(key, root);
-        }
- 
-        void InOrder(splay* root)
-        {
-            if (root)
-            {
-                InOrder(root->lchild);
-                cout<< "key: " <<root->key;
-                if(root->lchild)
-                    cout<< " | left child: "<< root->lchild->key;
-                if(root->rchild)
-                    cout << " | right child: " << root->rchild->key;
-                cout<< "\n";
-                InOrder(root->rchild);
-            }
-        }
-};
+			else if (root->getLeft()->value < value) // Zig-Zag (Left Right)  
+			{  
+			
+				std::cout << "Zig Zag (Left Right)" << std::endl; 
+ 				root->getLeft()->setRight(splay(root->getLeft()->getRight(), value));  
+	  
+				// Do first rotation for root->left  
+				if (root->getLeft()->getRight() != NULL)  
+					root->setLeft(leftRotate(root->getLeft()));  
+			}  
+	  
+			// Do second rotation for root  
+			return (root->getLeft() == NULL)? root: rightRotate(root);  
+		}  
+		else // Key lies in right subtree  
+		{  
+			// Key is not in tree, we are done  
+			if (root->getRight() == NULL) return root;  
+	  
+			// Zig-Zag (Right Left)  
+			if (root->getRight()->value > value)  
+			{  
+				std::cout << "Zig Zag (Right Left)" << std::endl; 
 
+				root->getRight()->setLeft(splay(root->getRight()->getLeft(), value));  
+	  
+				// Do first rotation for root->right  
+				if (root->getRight()->getLeft() != NULL)  
+					root->setRight(rightRotate(root->getRight()));  
+			}  
+			else if (root->getRight()->value < value)// Zag-Zag (Right Right)  
+			{  
+				// Bring the key as root of  
+				// right-right and do first rotation
+				std::cout << "Zag Zag (Right Right)" << std::endl; 
+  
+				root->getRight()->setRight(splay(root->getRight()->getRight(), value));  
+				root = leftRotate(root);  
+			}  
+	  
+			// Do second rotation for root  
+			return (root->getRight() == NULL)? root: leftRotate(root);  
+		}  
+	}  
+	  
+	// Function to insert a new key k  
+	// in splay tree with given root  
+	Node *insert(Node *root, int k)  
+	{  
+		// Simple Case: If tree is empty  
+		if (root == NULL){
+			return (new Node(k));  
+		}
+	  
+		// Bring the closest leaf node to root  
+		root = splay(root, k);  
+	  
+		// If key is already present, then return  
+		if (root->value == k) return root;  
+	  
+		// Otherwise allocate memory for new node  
+		Node *newnode = new Node(k);  
+	  
+		// If root's key is greater, make  
+		// root as right child of newnode  
+		// and copy the left child of root to newnode  
+		if (root->value > k)  
+		{  
+			newnode->setRight(root);  
+			newnode->setLeft(root->getLeft());  
+			root->setLeft(NULL);  
+		}  
+	  
+		// If root's key is smaller, make  
+		// root as left child of newnode  
+		// and copy the right child of root to newnode  
+		else
+		{  
+			newnode->setLeft(root);  
+			newnode->setRight(root->getRight());  
+			root->setRight(NULL);  
+		}  
+	  
+		return newnode; // newnode becomes new root  
+	}
+	
+	void insertVector(std::vector<int> & vec){
+		Node * root = NULL;
+		for(int i = 1; i<=vec.size(); i++){
+			root = insert(root, vec[i-1]);
+			print2D(root);
+			std::cout << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+			
+		}
+		root = search(root, 50);
+		print2D(root);
+		
+	}
+	
+	Node *search(Node *root, int key)  
+	{  
+    	return splay(root, key);  
+	} 
+};  

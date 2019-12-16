@@ -26,6 +26,8 @@ std::vector<int> getS3(std::vector<int>  unsorted, std::vector<int> sorted){
 	// If the list size is even 
 	// Take the middle element 
 	else if(unsorted.size()%2 == 0){
+		//std::cout << "wiueiruwierjsdjklf: " << unsorted.at(((unsorted.size()+1)/2)-1) << std::endl;
+
 		sorted.push_back(unsorted.at((unsorted.size()/2)-1));
 		for(int i = 0; i< unsorted.size(); i++){
 			//populate the left list
@@ -48,6 +50,7 @@ std::vector<int> getS3(std::vector<int>  unsorted, std::vector<int> sorted){
 	//If the list size is odd
 	//To find the middle element add 1 to the size and divide by 2 
 	else if(unsorted.size()%2!=0){
+		//std::cout << "jsdjklf: " << unsorted.at(((unsorted.size()+1)/2)-1) << std::endl;
 		sorted.push_back(unsorted.at(((unsorted.size()+1)/2)-1));
 			for(int i = 0; i<unsorted.size(); i++){
 				//populate the left list
@@ -91,21 +94,32 @@ int main(){
 	
 	//random list
 	std::vector<int> S2 = {17,4,32,72,94,34,56,100,
-	1,43}; /*71,78,68, 93,70,92,65,77,60,49, 76,74,13,
+	1,43,71,78,68, 93,70,92,65,77,60,49, 76,74,13,
 	38,51,41,91,20,16,18,19,85,39,6,75,2,28,99,
 	87,5,8,81,57,63,55,23,59,46,66,79,86,64,67,
 	95,12,42,97,62,69,11,50,44,14,37,98,9,7,45,
 	29,24,84,54,83,82,27,33,96,21,35,26,61,3,52,
-	31,58,88,47,25,10,30,53,22,80,90,40,89,73,15,48,36};*/
+	31,58,88,47,25,10,30,53,22,80,90,40,89,73,15,48,36};
 	
 	
 
 	//Vector that is made of the middle element
-	/*std::vector<int> S3 = {}; 
-	S3 = getS3(S1, S3);*/
+	std::vector<int> S3 = {}; 
+	S3 = getS3(S1, S3);
+	
+	BST *bst = new BST();
+	/*bst->insertVector(S1);
+	bst->insertVector(S2);
+	bst->insertVector(S3); 
+	bst->insertVectorDSW(S1);
+	bst->insertVectorDSW(S2);
+	bst->insertVectorDSW(S3);*/
 
 	AVL * avl = new AVL();
+	avl->insertVector(S1);
 	avl->insertVector(S2);
+	avl->insertVector(S3);
+	
 
 	
 	/*std::vector<int> S1center;
@@ -117,14 +131,19 @@ int main(){
 	root->deleteFullTree();
 	delete(root);*/
 	
-	/*
 	
-	SplayTree * ST = new SplayTree();
 	
+	/*SplayTree * ST = new SplayTree();
+	
+	ST->insertVector(S1);
 	ST->insertVector(S2);*/
+	
 	
 	/*AVL *avl = new AVL();
 	avl->insertVector(S1);*/
+	
+	
+	
 	
 	return 0;
 }

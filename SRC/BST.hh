@@ -77,7 +77,7 @@ class BST{
     				break;
     			}
     			else if(currentNode->getRight() == y){
-    				std::cout << "parentNode is: " << currentNode->value << std::endl;
+    				//std::cout << "parentNode is: " << currentNode->value << std::endl;
     				currentNode->setRight(x);
     				break;
     			}
@@ -94,7 +94,7 @@ class BST{
 			Node * currentNode = root;
 			while(currentNode!=NULL){
 				while(currentNode->getLeft()!=NULL){
-					std::cout << "currentNode is: " << currentNode->value << std::endl;
+					//std::cout << "currentNode is: " << currentNode->value << std::endl;
 					if(currentNode->getLeft()->value < root->value){
 						root = currentNode->getLeft();
 					}
@@ -124,7 +124,7 @@ class BST{
 		Node * balanceTree(Node * root, int nodeCount){
 			Node * currentNode1 = root;
 			int expected = ceil(log2(nodeCount)) - nodeCount;
-			std::cout << "expected: " << expected << " " << "NodeCount: " << nodeCount << std::endl;
+			//std::cout << "expected: " << expected << " " << "NodeCount: " << nodeCount << std::endl;
 			for(int i = 0; i < expected; i++){
 				if(i==0){
 					root = rotateLeft(currentNode1);
@@ -156,7 +156,7 @@ class BST{
 		
 		
 		Node * sortDSW(Node * root, int nodeCount){
-			std::cout << "createBackbone" << std::endl;
+			//std::cout << "createBackbone" << std::endl;
 			root = createBackBone(root);
 			root = balanceTree(root, nodeCount);
 			return root;
@@ -170,13 +170,12 @@ class BST{
 					root = sortDSW(root, i);
 					std::cout << "Tree height is " << findTreeHeight(root) << std::endl;
 					print2D(root);
-					std::cout << "done" << std::endl;  
 				}
-				std::cout << "done" << std::endl;  
 
 			}
-			std::cout << "done" << std::endl;  
-
+			std::cout << "Deleting Node 50" << std::endl;
+			root = deleteNode(root, 50);
+			std::cout << "Tree height is " << findTreeHeight(root) << std::endl << std::endl << std::endl << std::endl << std::endl;
 			return root;
 		}
 		
@@ -189,7 +188,11 @@ class BST{
 					print2D(root);  
 				}
 			}
-			
+			std::cout << "Deleting Node 50" << std::endl;
+			root = deleteNode(root,50);
+			std::cout << "Tree height is " << findTreeHeight(root) << std::endl << std::endl << std::endl << std::endl << std::endl << std::endl;
+
+			print2D(root);
 			return root;
 		}  
 
@@ -236,89 +239,64 @@ class BST{
 			return root;
 		}
 		
-		Node * deleteNode(int value, Node * root){
-			Node * currentNode = root;
-			Node * parentNode = root;
-			while(true){
-				//If the value is the root Node
-				if(currentNode->value == value){
-					if(currentNode->getLeft() == NULL && currentNode->getRight() == NULL){
-						//Checking to see if it is the right or left child
-						if(parentNode->value > currentNode->value){ //deleting the left
-							parentNode->setLeft(NULL);
-						}
-						else{ // deleting the right
-							parentNode->setRight(NULL);
-						}
-						delete(currentNode);
-						break;
-					}
-					else if(currentNode->getLeft()!=NULL && currentNode->getRight() == NULL){
-						//Checking to see if it is the right or the left child.
-						if(parentNode->value > currentNode->value){ //Deleting the left 
-							parentNode->setLeft(currentNode->getLeft());
-						}
-						else{ //deleting the right
-							parentNode->setRight(currentNode->getLeft());
-						}
-						delete(currentNode);
-						break;
-					}
-					
-					else if(currentNode->getLeft()==NULL && currentNode->getRight() != NULL){
-						//Checking to see if it is the right or the left child
-						if(parentNode->value > currentNode->value){ //Deleting the left 
-							parentNode->setLeft(currentNode->getRight());
-						}
-						else{ //deleting the right
-							parentNode->setRight(currentNode->getRight());
-						}
-						delete(currentNode);
-						break;						
-					}
-					
-					else if(currentNode->getLeft()!=NULL && currentNode->getRight() != NULL){
-						currentNode = currentNode->getRight();
-						Node * temp = currentNode->getLeft();
-						
-						while(temp->getLeft()!=NULL){
-							temp = temp->getLeft(); //Should be left child of currentNode
-							currentNode = currentNode->getLeft(); // Should be parent to tempNode
-						}
-						
-						if(parentNode->value > value){ //If we are deleting the node to the left
-							//temp is replacing parentNode->getLeft();
-							temp->setRight(parentNode->getLeft()->getRight());
-							temp->setLeft(parentNode->getLeft()->getLeft());
-							delete(parentNode->getLeft());
-							parentNode->setLeft(temp);
-							currentNode->setLeft(NULL);
-							break;
-						}
-						else{ //If we are deleting the node to the right
-							//temp is replacing parentNode->getRight()
-							temp->setRight(parentNode->getRight()->getRight());
-							temp->setLeft(parentNode->getRight()->getLeft());
-							delete(parentNode->getRight());
-							parentNode->setRight(temp);
-							currentNode->setLeft(NULL);
-							break;
-						}						
-					}
-				}
-				else if(currentNode->value < value){
-					parentNode = currentNode;
-					currentNode = currentNode->getRight();
-				}
-				else if(currentNode->value > value){
-					parentNode = currentNode;
-					currentNode = currentNode->getLeft();
-				}
-					
-			}
-			std::cout << "Tree height is " << findTreeHeight(root) << std::endl;
-			print2D(root);  
-			return root;
-		}		
+/* Given a binary search tree and a key, this function deletes the key 
+   and returns the new root */
+Node* deleteNode(Node* root, int value) 
+{ 
+    // base case 
+    if (root == NULL) return root; 
+  
+    // If the key to be deleted is smaller than the root's key, 
+    // then it lies in left subtree 
+    if (value < root->value) 
+        root->setLeft(deleteNode(root->getLeft(), value)); 
+  
+    // If the key to be deleted is greater than the root's key, 
+    // then it lies in right subtree 
+    else if (value > root->value) 
+        root->setRight(deleteNode(root->getRight(), value)); 
+  
+    // if key is same as root's key, then This is the node 
+    // to be deleted 
+    else
+    { 
+        // node with only one child or no child 
+        if (root->getLeft() == NULL) 
+        { 
+            Node *temp = root->getRight(); 
+            free(root); 
+            return temp; 
+        } 
+        else if (root->getRight() == NULL) 
+        { 
+            Node *temp = root->getLeft(); 
+            free(root); 
+            return temp; 
+        } 
+  
+        // node with two children: Get the inorder successor (smallest 
+        // in the right subtree) 
+        Node* temp = minValueNode(root->getRight()); 
+  
+        // Copy the inorder successor's content to this node 
+        root->value = temp->value; 
+  
+        // Delete the inorder successor 
+        root->setRight(deleteNode(root->getRight(), temp->value)); 
+    } 
+    return root; 
+} 
+
+
+Node * minValueNode(Node* node) 
+{ 
+    Node* current = node; 
+  
+    /* loop down to find the leftmost leaf */
+    while (current && current->getLeft() != NULL) 
+        current = current->getLeft(); 
+  
+    return current; 
+} 		
 
 };
